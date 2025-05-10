@@ -1,0 +1,130 @@
+﻿@model ObjectDetection.Presentation.Models.ImageUploadViewModel
+
+@{
+    ViewData["Title"] = "Image Upload";
+}
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+    }
+
+    .sidebar {
+        width: 200px;
+        margin-right: 20px;
+    }
+
+        .sidebar h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+
+        .sidebar img {
+            width: 100%;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+    .main-content {
+        flex: 1;
+    }
+
+    form {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        width: 400px;
+        margin-bottom: 30px;
+    }
+
+    input[type="file"] {
+        margin-bottom: 15px;
+        display: block;
+    }
+
+    button {
+        padding: 8px 16px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+    .image-preview {
+        margin-top: 20px;
+    }
+
+        .image-preview img {
+            max-width: 500px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+    .result-list {
+        list-style-type: none;
+        padding-left: 0;
+    }
+
+        .result-list li {
+            padding: 10px;
+            background-color: #ecf0f1;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        .result-list strong {
+            color: #2c3e50;
+        }
+</style>
+
+<div class="sidebar">
+    @if (Model.UserImages != null && Model.UserImages.Any())
+    {
+        <h3>Yüklediğiniz Fotoğraflar</h3>
+        @foreach (var img in Model.UserImages)
+        {
+            <img src="@img.Path" alt="@img.FileName" />
+        }
+    }
+</div>
+
+<div class="main-content">
+    <h2>Upload Image for Detection</h2>
+
+    <form asp-action="Upload" asp-controller="Image" method="post" enctype="multipart/form-data">
+        <input type="file" name="ImageFile" />
+        <button type="submit">Analyze</button>
+    </form>
+
+    @if (Model.UploadedImagePath != null)
+    {
+        <div class="image-preview">
+            <h3>Uploaded Image:</h3>
+            <img src="@Model.UploadedImagePath" alt="Uploaded Image" />
+        </div>
+    }
+
+    @if (Model.Results != null && Model.Results.Any())
+    {
+        <h3>Detection Results:</h3>
+        <ul class="result-list">
+            @foreach (var result in Model.Results)
+            {
+                <li>
+                    <strong>@result.Class</strong> — Score: @result.Score
+                    | Dominant: <span style="color:@result.DominantColor">@result.DominantColor</span>
+                    | KMeans: <span style="color:@result.KmeansColor">@result.KmeansColor</span>
+                </li>
+            }
+        </ul>
+    }
+</div>
