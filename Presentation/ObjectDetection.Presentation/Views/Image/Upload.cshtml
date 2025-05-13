@@ -100,6 +100,13 @@
 <div class="main-content">
     <h2>Upload Image for Detection</h2>
 
+    <!-- ✅ Arama formu -->
+    <form asp-controller="Image" asp-action="Search" method="get" style="margin-bottom: 20px;">
+        <input type="text" name="query" value="@Model.SearchQuery" placeholder="örn. beyaz araba, kedi, tekirdağ" />
+        <button type="submit">Ara</button>
+    </form>
+
+    <!-- ✅ Upload Formu -->
     <form asp-action="Upload" asp-controller="Image" method="post" enctype="multipart/form-data">
         <input type="file" name="ImageFile" />
         <button type="submit">Analyze</button>
@@ -119,10 +126,32 @@
         <ul class="result-list">
             @foreach (var result in Model.Results)
             {
+                var rgb = result.DominantColorRgb != null && result.DominantColorRgb.Count == 3
+                ? $"rgb({result.DominantColorRgb[0]}, {result.DominantColorRgb[1]}, {result.DominantColorRgb[2]})"
+                : "gray";
+
                 <li>
                     <strong>@result.Class</strong> — Score: @result.Score
-                    | Dominant: <span style="color:@result.DominantColor">@result.DominantColor</span>
-                    | KMeans: <span style="color:@result.KmeansColor">@result.KmeansColor</span>
+                    | Color: <span style="color:@rgb">@result.ColorName</span>
+                </li>
+            }
+        </ul>
+    }
+
+    <!-- ✅ Arama Sonuçları -->
+    @if (Model.SearchResults != null && Model.SearchResults.Any())
+    {
+        <h3>Arama Sonuçları:</h3>
+        <ul class="result-list">
+            @foreach (var item in Model.SearchResults)
+            {
+                <li>
+                    <strong>@item.FileName</strong><br />
+                    Etiketler: @string.Join(", ", item.Labels)<br />
+                    Renkler: @string.Join(", ", item.Colors)<br />
+                    Şehir: @item.City
+                    <br />
+                    <img src="@item.Path" style="max-width:150px; margin-top:5px;" />
                 </li>
             }
         </ul>

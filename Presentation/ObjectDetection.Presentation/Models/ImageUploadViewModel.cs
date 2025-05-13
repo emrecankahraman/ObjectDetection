@@ -10,6 +10,8 @@ namespace ObjectDetection.Presentation.Models
         public List<DetectionResultDto> Results { get; set; } = new();
         public string UploadedImagePath { get; set; }
         public List<ImageDto> UserImages { get; set; }
+        public string? SearchQuery { get; set; }
+        public List<ElasticImageDto>? SearchResults { get; set; }
 
     }
 }

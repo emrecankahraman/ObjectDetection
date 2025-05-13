@@ -18,7 +18,7 @@ namespace ObjectDetection.Infrastructure.Services
             _configuration = config;
         }
 
-        public async Task<List<DetectionResultDto>> AnalyzeAsync(IFormFile imageFile)
+        public async Task<ImageAnalysisResultDto> AnalyzeAsync(IFormFile imageFile)
         {
             var url = _configuration["AIService:Url"] ?? "http://127.0.0.1:5000/predict";
             using var content = new MultipartFormDataContent();
@@ -36,28 +36,47 @@ namespace ObjectDetection.Infrastructure.Services
             var json = await response.Content.ReadAsStringAsync();
             var root = JsonDocument.Parse(json).RootElement;
 
-            var detections = new List<DetectionResultDto>();
-            foreach (var d in root.GetProperty("detections").EnumerateArray())
+            var result = new ImageAnalysisResultDto();
+
+            // Konum
+            if (root.TryGetProperty("location", out var location))
             {
-                detections.Add(new DetectionResultDto
-                {
-                    Class = d.GetProperty("class").GetString(),
-                    Score = d.GetProperty("score").GetSingle(),
-                    DominantColor = d.GetProperty("dominant_color").GetString(),
-                    KmeansColor = d.GetProperty("kmeans_color").GetString(),
-                    ImageWidth = d.GetProperty("image_width").GetInt32(),
-                    ImageHeight = d.GetProperty("image_height").GetInt32(),
-                    BoundingBox = new BoundingBoxDto
-                    {
-                        Ymin = d.GetProperty("bounding_box").GetProperty("ymin").GetSingle(),
-                        Xmin = d.GetProperty("bounding_box").GetProperty("xmin").GetSingle(),
-                        Ymax = d.GetProperty("bounding_box").GetProperty("ymax").GetSingle(),
-                        Xmax = d.GetProperty("bounding_box").GetProperty("xmax").GetSingle()
-                    }
-                });
+                if (location.TryGetProperty("latitude", out var lat) && lat.ValueKind == JsonValueKind.Number)
+                    result.Latitude = lat.GetDouble();
+
+                if (location.TryGetProperty("longitude", out var lng) && lng.ValueKind == JsonValueKind.Number)
+                    result.Longitude = lng.GetDouble();
+
+                if (location.TryGetProperty("country", out var country) && country.ValueKind == JsonValueKind.String)
+                    result.Country = country.GetString();
+
+                if (location.TryGetProperty("state", out var state) && state.ValueKind == JsonValueKind.String)
+                    result.State = state.GetString();
+
+                if (location.TryGetProperty("city", out var city) && city.ValueKind == JsonValueKind.String)
+                    result.City = city.GetString();
+
+                if (location.TryGetProperty("road", out var road) && road.ValueKind == JsonValueKind.String)
+                    result.Road = road.GetString();
             }
 
-            return detections;
+
+            // Nesne Tespiti
+            if (root.TryGetProperty("objects", out var detectionsJson))
+            {
+                foreach (var d in detectionsJson.EnumerateArray())
+                {
+                    result.Detections.Add(new DetectionResultDto
+                    {
+                        Class = d.GetProperty("class").GetString(),
+                        Score = d.GetProperty("score").GetSingle(),
+                        ColorName = d.GetProperty("color_name").GetString(),
+                        DominantColorRgb = d.GetProperty("dominant_color_rgb").EnumerateArray().Select(x => x.GetInt32()).ToList()
+                    });
+                }
+            }
+
+            return result;
         }
     }
 }

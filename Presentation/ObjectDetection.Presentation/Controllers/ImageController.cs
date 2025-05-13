@@ -68,5 +68,21 @@ namespace ObjectDetection.Presentation.Controllers
 
             return View(newModel);
         }
+       
+        
+        [HttpGet("search")]
+        public async Task<IActionResult> Search([FromQuery] string query, [FromServices] ISearchImageUseCase searchImageUseCase)
+        {
+            var model = new ImageUploadViewModel
+            {
+                UserImages = await _getUserImagesUseCase.ExecuteAsync(),
+                SearchQuery = query,
+                SearchResults = await searchImageUseCase.ExecuteAsync(query)
+            };
+
+            return View("Upload", model);
+        }
+
     }
+
 }
