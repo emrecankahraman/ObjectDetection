@@ -1,159 +1,398 @@
 ﻿@model ObjectDetection.Presentation.Models.ImageUploadViewModel
 
 @{
-    ViewData["Title"] = "Image Upload";
+    ViewData["Title"] = "Upload & Search";
+    Layout = null;
 }
 
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        display: flex;
-    }
-
-    .sidebar {
-        width: 200px;
-        margin-right: 20px;
-    }
-
-        .sidebar h3 {
-            margin-top: 0;
-            color: #2c3e50;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Upload & Search</title>
+    <style>
+        * {
+            box-sizing: border-box;
         }
 
-        .sidebar img {
-            width: 100%;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #a18cd1, #fbc2eb);
+            display: flex;
+            min-height: 100vh;
         }
 
-    .main-content {
-        flex: 1;
-    }
-
-    form {
-        background-color: #f9f9f9;
-        padding: 20px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        width: 400px;
-        margin-bottom: 30px;
-    }
-
-    input[type="file"] {
-        margin-bottom: 15px;
-        display: block;
-    }
-
-    button {
-        padding: 8px 16px;
-        background-color: #3498db;
-        color: white;
-        border: none;
-        border-radius: 4px;
-        cursor: pointer;
-    }
-
-        button:hover {
-            background-color: #2980b9;
+        .hamburger-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1001;
+            background: #5e5ce6;
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            display: block;
         }
 
-    .image-preview {
-        margin-top: 20px;
-    }
-
-        .image-preview img {
-            max-width: 500px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+        .user-dropdown {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1002;
         }
 
-    .result-list {
-        list-style-type: none;
-        padding-left: 0;
-    }
+        .user-icon {
+            font-size: 22px;
+            background: white;
+            color: #5e5ce6;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
 
-        .result-list li {
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background-color: white;
+            min-width: 100px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
             padding: 10px;
-            background-color: #ecf0f1;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            border-radius: 8px;
+            z-index: 1003;
+        }
+
+            .dropdown-content form {
+                margin: 0;
+            }
+
+            .dropdown-content button {
+                width: 100%;
+                padding: 6px;
+                border: none;
+                background-color: #ff4b5c;
+                color: white;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+                .dropdown-content button:hover {
+                    background-color: #e63946;
+                }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 250px;
+            height: 100vh;
+            background-color: white;
+            padding: 20px;
+            color: black;
+            overflow-y: auto;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            padding-top: 60px;
+        }
+
+            .sidebar.active {
+                transform: translateX(0);
+            }
+
+            .sidebar h3 {
+                color: #5e5ce6;
+                margin-bottom: 15px;
+            }
+
+            .sidebar img {
+                width: 100%;
+                border-radius: 8px;
+                margin-bottom: 10px;
+            }
+
+        .main-content {
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .sidebar.active ~ .main-content {
+            margin-left: 250px;
+        }
+
+        .upload-box {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+            .upload-box h2 {
+                color: #5e5ce6;
+                margin-bottom: 20px;
+            }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100%;
+            align-items: stretch; /* 👈 Bu ortalamayı iptal eder */
+        }
+
+
+            .form-section input[type="text"],
+            .form-section button {
+                width: 100%;
+                padding: 12px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                font-size: 15px;
+                outline: none;
+            }
+
+            .form-section button {
+                background: linear-gradient(to right, #667eea, #764ba2);
+                border: none;
+                color: white;
+                font-weight: bold;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .form-section button:hover {
+                    opacity: 0.9;
+                }
+
+        .file-upload-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 12px;
             margin-bottom: 10px;
+            width: 100%;
         }
 
-        .result-list strong {
-            color: #2c3e50;
+
+        .file-label {
+            background: #5e5ce6;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            white-space: nowrap;
         }
-</style>
 
-<div class="sidebar">
-    @if (Model.UserImages != null && Model.UserImages.Any())
-    {
-        <h3>Yüklediğiniz Fotoğraflar</h3>
-        @foreach (var img in Model.UserImages)
-        {
-            <img src="@img.Path" alt="@img.FileName" />
+            .file-label:hover {
+                background: #4b4bd1;
+            }
+
+        .file-name {
+            font-size: 14px;
+            color: #333;
+            margin-left: 12px;
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
-    }
-</div>
 
-<div class="main-content">
-    <h2>Upload Image for Detection</h2>
+        .image-preview {
+            margin-top: 20px;
+            text-align: center;
+        }
 
-    <!-- ✅ Arama formu -->
-    <form asp-controller="Image" asp-action="Search" method="get" style="margin-bottom: 20px;">
-        <input type="text" name="query" value="@Model.SearchQuery" placeholder="örn. beyaz araba, kedi, tekirdağ" />
-        <button type="submit">Ara</button>
-    </form>
+            .image-preview img {
+                max-width: 100%;
+                max-height: 400px;
+                object-fit: contain;
+                border-radius: 10px;
+                border: 1px solid #ddd;
+            }
 
-    <!-- ✅ Upload Formu -->
-    <form asp-action="Upload" asp-controller="Image" method="post" enctype="multipart/form-data">
-        <input type="file" name="ImageFile" />
-        <button type="submit">Analyze</button>
-    </form>
+        .result-section {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
 
-    @if (Model.UploadedImagePath != null)
-    {
-        <div class="image-preview">
-            <h3>Uploaded Image:</h3>
-            <img src="@Model.UploadedImagePath" alt="Uploaded Image" />
+            .result-section h3 {
+                color: #5e5ce6;
+                margin-bottom: 15px;
+                text-align: center;
+            }
+
+        .result-list {
+            list-style-type: none;
+            padding-left: 0;
+            margin-top: 15px;
+        }
+
+            .result-list li {
+                padding: 12px;
+                background-color: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+                margin-bottom: 12px;
+            }
+
+            .result-list strong {
+                color: #5e5ce6;
+            }
+
+            .result-list img {
+                margin-top: 8px;
+                max-width: 150px;
+                border-radius: 8px;
+            }
+    </style>
+</head>
+<body>
+    <button id="toggle-sidebar" class="hamburger-btn">☰</button>
+
+    <div class="user-dropdown">
+        <button id="userIcon" class="user-icon">👤</button>
+        <div id="dropdownMenu" class="dropdown-content">
+            <form method="post" asp-controller="Account" asp-action="Logout">
+                <button type="submit">Logout</button>
+            </form>
         </div>
-    }
+    </div>
 
-    @if (Model.Results != null && Model.Results.Any())
-    {
-        <h3>Detection Results:</h3>
-        <ul class="result-list">
-            @foreach (var result in Model.Results)
+    <div id="sidebar" class="sidebar">
+        <h3>📁 Yüklediğiniz Görseller</h3>
+        @if (Model.UserImages != null && Model.UserImages.Any())
+        {
+            foreach (var img in Model.UserImages)
             {
-                var rgb = result.DominantColorRgb != null && result.DominantColorRgb.Count == 3
-                ? $"rgb({result.DominantColorRgb[0]}, {result.DominantColorRgb[1]}, {result.DominantColorRgb[2]})"
-                : "gray";
-
-                <li>
-                    <strong>@result.Class</strong> — Score: @result.Score
-                    | Color: <span style="color:@rgb">@result.ColorName</span>
-                </li>
+                <img src="@img.Path" alt="@img.FileName" />
             }
-        </ul>
-    }
+        }
+    </div>
 
-    <!-- ✅ Arama Sonuçları -->
-    @if (Model.SearchResults != null && Model.SearchResults.Any())
-    {
-        <h3>Arama Sonuçları:</h3>
-        <ul class="result-list">
-            @foreach (var item in Model.SearchResults)
-            {
-                <li>
-                    <strong>@item.FileName</strong><br />
-                    Etiketler: @string.Join(", ", item.Labels)<br />
-                    Renkler: @string.Join(", ", item.Colors)<br />
-                    Şehir: @item.City
-                    <br />
-                    <img src="@item.Path" style="max-width:150px; margin-top:5px;" />
-                </li>
+    <div class="main-content">
+        <div class="upload-box">
+            <h2>📤 Görsel Yükle & 🔍 Arama</h2>
+            <div class="form-section">
+                <form asp-controller="Image" asp-action="Search" method="get">
+                    <input type="text" name="query" value="@Model.SearchQuery" placeholder="örn. beyaz araba, köpek, istanbul" />
+                    <button type="submit">Ara</button>
+                </form>
+
+                <form asp-action="Upload" asp-controller="Image" method="post" enctype="multipart/form-data">
+                    <div class="file-upload-wrapper">
+                        <label class="file-label">
+                            📎 Dosya Seç
+                            <input type="file" name="ImageFile" hidden onchange="showFileName(this)">
+                        </label>
+                        <span id="file-name" class="file-name">Dosya seçilmedi</span>
+                    </div>
+                    <button type="submit">Analyze</button>
+                </form>
+            </div>
+        </div>
+
+        @if (Model.UploadedImagePath != null)
+        {
+            <div class="result-section">
+                <div class="image-preview">
+                    <h3>Yüklenen Görsel</h3>
+                    <img src="@Model.UploadedImagePath" alt="Uploaded Image" />
+                </div>
+            </div>
+        }
+
+        @if (Model.Results != null && Model.Results.Any())
+        {
+            <div class="result-section">
+                <h3>🧠 Tespit Sonuçları</h3>
+                <ul class="result-list">
+                    @foreach (var result in Model.Results)
+                    {
+                        var rgb = result.DominantColorRgb != null && result.DominantColorRgb.Count == 3
+                        ? $"rgb({result.DominantColorRgb[0]}, {result.DominantColorRgb[1]}, {result.DominantColorRgb[2]})"
+                        : "gray";
+
+                        <li>
+                            <strong>@result.Class</strong> — Score: @result.Score
+                            | Renk: <span style="color:@rgb">@result.ColorName</span>
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+
+        @if (Model.SearchResults != null && Model.SearchResults.Any())
+        {
+            <div class="result-section">
+                <h3>🔍 Arama Sonuçları</h3>
+                <ul class="result-list">
+                    @foreach (var item in Model.SearchResults)
+                    {
+                        <li>
+                            <strong>@item.FileName</strong><br />
+                            Etiketler: @string.Join(", ", item.Labels)<br />
+                            Renkler: @string.Join(", ", item.Colors)<br />
+                            Şehir: @item.City
+                            <br />
+                            <img src="@item.Path" />
+                        </li>
+                    }
+                </ul>
+            </div>
+        }
+    </div>
+
+    <script>
+        const toggleBtn = document.getElementById("toggle-sidebar");
+        const sidebar = document.getElementById("sidebar");
+        const userIcon = document.getElementById("userIcon");
+        const dropdownMenu = document.getElementById("dropdownMenu");
+
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active");
+        });
+
+        userIcon.addEventListener("click", () => {
+            dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
+        });
+
+        window.addEventListener("click", function (e) {
+            if (!userIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
+                dropdownMenu.style.display = "none";
             }
-        </ul>
-    }
-</div>
+        });
+
+        function showFileName(input) {
+            const fileName = input.files[0] ? input.files[0].name : 'Dosya seçilmedi';
+            document.getElementById('file-name').textContent = fileName;
+        }
+    </script>
+</body>
+</html>

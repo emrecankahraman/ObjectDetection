@@ -1,32 +1,127 @@
 ﻿@model ObjectDetection.Presentation.Models.RegisterViewModel
+
 @{
     ViewData["Title"] = "Register";
+    Layout = null;
 }
 
-<h2>Register</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            width: 100%;
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #a18cd1, #fbc2eb);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-<form asp-action="Register" method="post">
-    <div>
-        <label asp-for="Email"></label>
-        <input asp-for="Email" class="form-control" />
-        <span asp-validation-for="Email" class="text-danger"></span>
+        .auth-box {
+            background: white;
+            padding: 60px 30px 80px 30px; /* aynı login gibi */
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            box-sizing: border-box;
+            text-align: center;
+            min-height: 550px; /* login ile eşitlik için */
+        }
+
+            .auth-box h2 {
+                color: #5e5ce6;
+                margin-bottom: 10px;
+            }
+
+        form {
+
+            display: flex;
+            flex-direction: column;
+            gap: 35px; /* login ile aynı aralık */
+            width: 100%; /* 👈 form kutunun tamamını kaplasın */
+            align-items: stretch;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 15px;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 12px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            button:hover {
+                opacity: 0.9;
+            }
+
+        .text-danger {
+            font-size: 12px;
+            color: red;
+            text-align: left;
+        }
+
+        p {
+            color: #666;
+            font-size: 14px;
+            margin-top: 25px;
+        }
+
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-box">
+        <h2>Sign up</h2>
+
+        <form asp-action="Register" method="post">
+            <div>
+                <input asp-for="Email" placeholder="Email address" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+
+            <div>
+                <input asp-for="Password" type="password" placeholder="Password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <div>
+                <input asp-for="ConfirmPassword" type="password" placeholder="Confirm Password" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <button type="submit">Sign up</button>
+        </form>
+
+        <p>
+            Already a member?
+            <a asp-controller="Account" asp-action="Login">Sign in</a>
+        </p>
     </div>
-
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" type="password" class="form-control" />
-        <span asp-validation-for="Password" class="text-danger"></span>
-    </div>
-
-    <div>
-        <label asp-for="ConfirmPassword"></label>
-        <input asp-for="ConfirmPassword" type="password" class="form-control" />
-        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-    </div>
-
-    <button type="submit" class="btn btn-success">Register</button>
-</form>
-
-<p>
-    Already have an account? <a asp-controller="Account" asp-action="Login">Login here</a>.
-</p>
+</body>
+</html>

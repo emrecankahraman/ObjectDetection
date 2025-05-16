@@ -7,9 +7,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ?? Add services to the container
 builder.Services.AddPersistenceServices(builder.Configuration)
-    .AddInfrastructureServices(); // bunu ekle
+    .AddInfrastructureServices(); 
 
-builder.Services.AddControllersWithViews(); // MVC için
+builder.Services.AddControllersWithViews(); 
 
 // ? Authentication ve Authorization middleware'leri için gerekli
 builder.Services.AddAuthentication();
