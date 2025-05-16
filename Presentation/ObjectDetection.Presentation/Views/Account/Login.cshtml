@@ -27,33 +27,37 @@
             align-items: center;
         }
 
-        .register-box {
+        .auth-box {
             background: white;
-            padding: 60px 30px 80px 30px;
+            padding: 60px 30px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
+            width: 400px;
+            height: 550px;
             text-align: center;
-            min-height: 550px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .register-box h2 {
-            color: #5e5ce6;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
+            .auth-box h2 {
+                color: #5e5ce6;
+                margin-top: 0;
+                margin-bottom: 10px;
+            }
 
-        .register-box p {
-            color: #999;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
+            .auth-box p {
+                color: #999;
+                margin-bottom: 30px;
+                font-size: 14px;
+            }
 
         form {
             display: flex;
             flex-direction: column;
-            gap: 35px;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px;
         }
 
         input[type="email"],
@@ -91,16 +95,14 @@
             transition: 0.3s;
         }
 
-        button:hover {
-            opacity: 0.9;
-        }
+            button:hover {
+                opacity: 0.9;
+            }
 
         a {
             color: #667eea;
             text-decoration: none;
             font-weight: 500;
-            display: inline-block;
-            margin-top: 15px;
         }
 
         .text-danger {
@@ -108,10 +110,16 @@
             color: red;
             text-align: left;
         }
+
+        .footer-text {
+            color: #666;
+            font-size: 14px;
+            margin-top: 25px;
+        }
     </style>
 </head>
 <body class="login-page">
-    <div class="register-box">
+    <div class="auth-box">
         <h2>Sign in</h2>
         <p>Welcome back! Please Sign in to continue.</p>
 
@@ -134,7 +142,7 @@
             <button type="submit">Sign in</button>
         </form>
 
-        <p>
+        <p class="footer-text">
             Don't have an account?
             <a asp-controller="Account" asp-action="Register">Sign up</a>
         </p>

@@ -12,42 +12,55 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
     <style>
-        html, body {
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
             margin: 0;
             padding: 0;
-            height: 100%;
-            width: 100%;
             font-family: 'Segoe UI', sans-serif;
             background: linear-gradient(to right, #a18cd1, #fbc2eb);
+            height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
         }
 
         .auth-box {
             background: white;
-            padding: 60px 30px 80px 30px; /* aynı login gibi */
+            padding: 60px 30px;
             border-radius: 16px;
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 400px;
-            box-sizing: border-box;
+            width: 400px;
+            height: 550px;
             text-align: center;
-            min-height: 550px; /* login ile eşitlik için */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
             .auth-box h2 {
                 color: #5e5ce6;
-                margin-bottom: 10px;
+                margin-top: 0;
+                margin-bottom: 30px;
+                text-align: center;
+                width: 100%;
             }
 
-        form {
-
+        .auth-content {
+            flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 35px; /* login ile aynı aralık */
-            width: 100%; /* 👈 form kutunun tamamını kaplasın */
-            align-items: stretch;
+            padding-top: 30px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            margin-bottom: 20px;
         }
 
         input {
@@ -57,10 +70,10 @@
             border-radius: 8px;
             font-size: 15px;
             outline: none;
-            box-sizing: border-box;
         }
 
         button {
+            width: 100%;
             padding: 12px;
             background: linear-gradient(to right, #667eea, #764ba2);
             border: none;
@@ -70,6 +83,7 @@
             font-size: 16px;
             cursor: pointer;
             transition: 0.3s;
+            margin-top: 10px;
         }
 
             button:hover {
@@ -82,10 +96,10 @@
             text-align: left;
         }
 
-        p {
+        .footer-text {
             color: #666;
             font-size: 14px;
-            margin-top: 25px;
+            margin-bottom: 20px;
         }
 
         a {
@@ -97,28 +111,30 @@
 </head>
 <body>
     <div class="auth-box">
-        <h2>Sign up</h2>
+        <div class="auth-content">
+            <h2>Sign up</h2>
+           
+            <form asp-action="Register" method="post">
+                <div>
+                    <input asp-for="Email" placeholder="Email address" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
 
-        <form asp-action="Register" method="post">
-            <div>
-                <input asp-for="Email" placeholder="Email address" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
+                <div>
+                    <input asp-for="Password" type="password" placeholder="Password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
 
-            <div>
-                <input asp-for="Password" type="password" placeholder="Password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
+                <div>
+                    <input asp-for="ConfirmPassword" type="password" placeholder="Confirm Password" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
 
-            <div>
-                <input asp-for="ConfirmPassword" type="password" placeholder="Confirm Password" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
+                <button type="submit">Sign up</button>
+            </form>
+        </div>
 
-            <button type="submit">Sign up</button>
-        </form>
-
-        <p>
+        <p class="footer-text">
             Already a member?
             <a asp-controller="Account" asp-action="Login">Sign in</a>
         </p>

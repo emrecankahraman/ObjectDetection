@@ -5,7 +5,6 @@
     Layout = null;
 }
 
-<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -157,7 +156,7 @@
             flex-direction: column;
             gap: 15px;
             width: 100%;
-            align-items: stretch; /* 👈 Bu ortalamayı iptal eder */
+            align-items: stretch; 
         }
 
 
@@ -195,12 +194,11 @@
 
 
         .file-label {
-            background: #5e5ce6;
+            background: linear-gradient(to right, #667eea, #764ba2);
             color: white;
-            padding: 10px 16px;
+            padding: 5px 5px;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
             transition: background 0.3s;
             white-space: nowrap;
         }
@@ -286,7 +284,7 @@
     </div>
 
     <div id="sidebar" class="sidebar">
-        <h3>📁 Yüklediğiniz Görseller</h3>
+        <h3>📁 Uploaded Images</h3>
         @if (Model.UserImages != null && Model.UserImages.Any())
         {
             foreach (var img in Model.UserImages)
@@ -298,20 +296,20 @@
 
     <div class="main-content">
         <div class="upload-box">
-            <h2>📤 Görsel Yükle & 🔍 Arama</h2>
+            <h2>📤 Upload Image & 🔍 Search</h2>
             <div class="form-section">
                 <form asp-controller="Image" asp-action="Search" method="get">
-                    <input type="text" name="query" value="@Model.SearchQuery" placeholder="örn. beyaz araba, köpek, istanbul" />
-                    <button type="submit">Ara</button>
+                    <input type="text" name="query" value="@Model.SearchQuery" placeholder="Search by keywords..." />
+                    <button type="submit">Search</button>
                 </form>
 
                 <form asp-action="Upload" asp-controller="Image" method="post" enctype="multipart/form-data">
                     <div class="file-upload-wrapper">
                         <label class="file-label">
-                            📎 Dosya Seç
+                            Select File
                             <input type="file" name="ImageFile" hidden onchange="showFileName(this)">
                         </label>
-                        <span id="file-name" class="file-name">Dosya seçilmedi</span>
+                        <span id="file-name" class="file-name">No file selected</span>
                     </div>
                     <button type="submit">Analyze</button>
                 </form>
@@ -322,7 +320,7 @@
         {
             <div class="result-section">
                 <div class="image-preview">
-                    <h3>Yüklenen Görsel</h3>
+                    <h3>Uploaded Image</h3>
                     <img src="@Model.UploadedImagePath" alt="Uploaded Image" />
                 </div>
             </div>
@@ -331,7 +329,7 @@
         @if (Model.Results != null && Model.Results.Any())
         {
             <div class="result-section">
-                <h3>🧠 Tespit Sonuçları</h3>
+                <h3>🧠 Detection Results</h3>
                 <ul class="result-list">
                     @foreach (var result in Model.Results)
                     {
@@ -351,15 +349,15 @@
         @if (Model.SearchResults != null && Model.SearchResults.Any())
         {
             <div class="result-section">
-                <h3>🔍 Arama Sonuçları</h3>
+                <h3>🔍 Search Results</h3>
                 <ul class="result-list">
                     @foreach (var item in Model.SearchResults)
                     {
                         <li>
                             <strong>@item.FileName</strong><br />
-                            Etiketler: @string.Join(", ", item.Labels)<br />
-                            Renkler: @string.Join(", ", item.Colors)<br />
-                            Şehir: @item.City
+                            Labels: @string.Join(", ", item.Labels)<br />
+                            Colors: @string.Join(", ", item.Colors)<br />
+                            City: @item.City
                             <br />
                             <img src="@item.Path" />
                         </li>
