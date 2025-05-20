@@ -19,6 +19,7 @@ namespace ObjectDetection.Infrastructure.Services
             var dto = new ElasticImageDto
             {
                 Id = image.Id,
+                UserId = image.UserId.ToString(),
                 FileName = image.FileName,
                 Path = image.Path,
                 UploadedAt = image.UploadedAt,
@@ -35,66 +36,56 @@ namespace ObjectDetection.Infrastructure.Services
 
         public async Task<List<ElasticImageDto>> SearchAsync(string keyword)
         {
-            // 🔤 1. Anahtar kelimeyi normalize et (Türkçe harfleri sadeleştir)
-            var normalizedKeyword = keyword
-                .ToLowerInvariant()
-                .Replace("ç", "c")
-                .Replace("ğ", "g")
-                .Replace("ı", "i")
-                .Replace("ö", "o")
-                .Replace("ş", "s")
-                .Replace("ü", "u");
+            if (string.IsNullOrWhiteSpace(keyword))
+            {
+                var allResults = await _client.SearchAsync<ElasticImageDto>(s => s
+                    .Index("images")
+                    .Query(q => q.MatchAll())
+                    .Size(1000)
+                );
 
-            var words = normalizedKeyword
-                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+                return allResults.Documents.ToList();
+            }
+                // 🔤 1. Anahtar kelimeyi normalize et (Türkçe harfleri sadeleştir)
+                string NormalizeText(string input)
+            {
+                return input
+                    .ToLowerInvariant()
+                    .Replace("ç", "c")
+                    .Replace("ğ", "g")
+                    .Replace("ı", "i")
+                    .Replace("ö", "o")
+                    .Replace("ş", "s")
+                    .Replace("ü", "u");
+            }
 
-            // 🎯 2. Sorgu yapılandırma: MatchPhrase + Match + parçalı + fuzzy
+            var normalizedKeyword = NormalizeText(keyword);
+            var words = normalizedKeyword.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            // 🎯 2. Sorgu yapılandırma: MatchPhrase + Match + fuzzy
             var shoulds = new List<Func<QueryContainerDescriptor<ElasticImageDto>, QueryContainer>>();
 
-            // Anahtar kelime için tam eşleşme
-            shoulds.Add(s => s.MatchPhrase(m => m
-                .Field(f => f.Labels)
-                .Query(normalizedKeyword)
-                .Boost(3)
-            ));
+            // Etiket ve renklerde tam eşleşme
+            shoulds.Add(s => s.MatchPhrase(m => m.Field(f => f.Labels).Query(normalizedKeyword).Boost(3)));
+            shoulds.Add(s => s.Match(m => m.Field(f => f.Labels).Query(normalizedKeyword).Boost(2)));
+            shoulds.Add(s => s.Match(m => m.Field(f => f.Colors).Query(normalizedKeyword).Boost(1)));
 
-            shoulds.Add(s => s.Match(m => m
-                .Field(f => f.Labels)
-                .Query(normalizedKeyword)
-                .Boost(2)
-            ));
-
-            shoulds.Add(s => s.Match(m => m
-                .Field(f => f.Colors)
-                .Query(normalizedKeyword)
-                .Boost(1)
-            ));
-
-            // 🔁 Kelimeleri tek tek ara + fuzziness
+            // 🔁 Kelimeleri tek tek ve farklı alanlarda fuzzy + orijinal ile eşleştir
             foreach (var word in words)
             {
-                shoulds.Add(s => s.Match(m => m
-                    .Field(f => f.Labels)
-                    .Query(word)
-                    .Fuzziness(Fuzziness.Auto)
-                    .Boost(2)
-                ));
+                // Labels
+                shoulds.Add(s => s.Match(m => m.Field(f => f.Labels).Query(word).Fuzziness(Fuzziness.Auto).Boost(2)));
 
-                shoulds.Add(s => s.Match(m => m
-                    .Field(f => f.Colors)
-                    .Query(word)
-                    .Fuzziness(Fuzziness.Auto)
-                ));
+                // Colors
+                shoulds.Add(s => s.Match(m => m.Field(f => f.Colors).Query(word).Fuzziness(Fuzziness.Auto)));
 
-                shoulds.Add(s => s.Match(m => m
-                    .Field(f => f.City)
-                    .Query(word)
-                ));
+                // City (orijinal ve normalize edilmiş)
+                shoulds.Add(s => s.MatchPhrase(m => m.Field(f => f.City).Query(keyword).Boost(3)));
+                shoulds.Add(s => s.Match(m => m.Field(f => f.City).Query(word).Fuzziness(Fuzziness.Auto).Boost(1.5)));
 
-                shoulds.Add(s => s.Match(m => m
-                    .Field(f => f.Country)
-                    .Query(word)
-                ));
+                // Country
+                shoulds.Add(s => s.MatchPhrase(m => m.Field(f => f.Country).Query(keyword)));
+                shoulds.Add(s => s.Match(m => m.Field(f => f.Country).Query(word).Fuzziness(Fuzziness.Auto)));
             }
 
             // 🔍 3. Elasticsearch isteği
@@ -107,6 +98,7 @@ namespace ObjectDetection.Infrastructure.Services
                     )
                 )
             );
+
             return response.Documents.ToList();
         }
     }

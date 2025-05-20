@@ -5,6 +5,7 @@
     Layout = null;
 }
 
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
@@ -22,71 +23,6 @@
             display: flex;
             min-height: 100vh;
         }
-
-        .hamburger-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1001;
-            background: #5e5ce6;
-            color: white;
-            border: none;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 20px;
-            cursor: pointer;
-            display: block;
-        }
-
-        .user-dropdown {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1002;
-        }
-
-        .user-icon {
-            font-size: 22px;
-            background: white;
-            color: #5e5ce6;
-            border: none;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            cursor: pointer;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-        }
-
-        .dropdown-content {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 45px;
-            background-color: white;
-            min-width: 100px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            padding: 10px;
-            border-radius: 8px;
-            z-index: 1003;
-        }
-
-            .dropdown-content form {
-                margin: 0;
-            }
-
-            .dropdown-content button {
-                width: 100%;
-                padding: 6px;
-                border: none;
-                background-color: #ff4b5c;
-                color: white;
-                border-radius: 5px;
-                cursor: pointer;
-            }
-
-                .dropdown-content button:hover {
-                    background-color: #e63946;
-                }
 
         .sidebar {
             position: fixed;
@@ -116,19 +52,31 @@
 
             .sidebar img {
                 width: 100%;
+                height: 150px;
+                object-fit: cover;
                 border-radius: 8px;
                 margin-bottom: 10px;
             }
 
+        .close-sidebar {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #5e5ce6;
+        }
+
         .main-content {
-            margin-left: 0;
-            transition: margin-left 0.3s ease;
-            flex-grow: 1;
+            flex: 1;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            padding: 40px;
+            padding: 60px 20px;
+            margin-left: 0;
+            transition: margin-left 0.3s ease;
         }
 
         .sidebar.active ~ .main-content {
@@ -156,9 +104,7 @@
             flex-direction: column;
             gap: 15px;
             width: 100%;
-            align-items: stretch; 
         }
-
 
             .form-section input[type="text"],
             .form-section button {
@@ -188,19 +134,16 @@
             align-items: center;
             justify-content: flex-start;
             gap: 12px;
-            margin-bottom: 10px;
-            width: 100%;
+            margin-bottom: 15px;
         }
 
-
         .file-label {
-            background: linear-gradient(to right, #667eea, #764ba2);
+            background: #5e5ce6;
             color: white;
-            padding: 5px 5px;
+            padding: 10px 16px;
             border-radius: 8px;
             cursor: pointer;
-            transition: background 0.3s;
-            white-space: nowrap;
+            font-weight: bold;
         }
 
             .file-label:hover {
@@ -217,19 +160,6 @@
             white-space: nowrap;
         }
 
-        .image-preview {
-            margin-top: 20px;
-            text-align: center;
-        }
-
-            .image-preview img {
-                max-width: 100%;
-                max-height: 400px;
-                object-fit: contain;
-                border-radius: 10px;
-                border: 1px solid #ddd;
-            }
-
         .result-section {
             background: white;
             padding: 30px;
@@ -242,7 +172,6 @@
 
             .result-section h3 {
                 color: #5e5ce6;
-                margin-bottom: 15px;
                 text-align: center;
             }
 
@@ -266,25 +195,104 @@
 
             .result-list img {
                 margin-top: 8px;
-                max-width: 150px;
+                width: 150px;
+                height: 150px;
+                object-fit: cover;
+                border-radius: 8px;
+            }
+
+        .hamburger-btn {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: white;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 999;
+        }
+
+        .user-dropdown {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 999;
+        }
+
+        .user-icon-btn {
+            background: white;
+            color: #5e5ce6;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            background-color: white;
+            min-width: 120px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+            .dropdown-content a {
+                color: #5e5ce6;
+                padding: 12px 16px;
+                text-decoration: none;
+                display: block;
+                font-weight: bold;
+                text-align: center;
+            }
+
+                .dropdown-content a:hover {
+                    background-color: #f1f1f1;
+                }
+
+        .user-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .uploaded-image-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 15px;
+        }
+
+            .uploaded-image-container img {
+                width: 300px;
+                height: 300px;
+                object-fit: cover;
                 border-radius: 8px;
             }
     </style>
 </head>
 <body>
     <button id="toggle-sidebar" class="hamburger-btn">☰</button>
-
     <div class="user-dropdown">
-        <button id="userIcon" class="user-icon">👤</button>
-        <div id="dropdownMenu" class="dropdown-content">
-            <form method="post" asp-controller="Account" asp-action="Logout">
-                <button type="submit">Logout</button>
-            </form>
+        <button class="user-icon-btn">👤</button>
+        <div class="dropdown-content">
+            <a href="/Account/Logout">Logout</a>
         </div>
     </div>
 
     <div id="sidebar" class="sidebar">
-        <h3>📁 Uploaded Images</h3>
+        <button id="close-sidebar" class="close-sidebar">✕</button>
+        <h3>📁 Your Uploaded Images</h3>
         @if (Model.UserImages != null && Model.UserImages.Any())
         {
             foreach (var img in Model.UserImages)
@@ -299,14 +307,14 @@
             <h2>📤 Upload Image & 🔍 Search</h2>
             <div class="form-section">
                 <form asp-controller="Image" asp-action="Search" method="get">
-                    <input type="text" name="query" value="@Model.SearchQuery" placeholder="Search by keywords..." />
+                    <input type="text" name="query" value="@Model.SearchQuery" placeholder="e.g. white car, dog, istanbul" />
                     <button type="submit">Search</button>
                 </form>
 
                 <form asp-action="Upload" asp-controller="Image" method="post" enctype="multipart/form-data">
                     <div class="file-upload-wrapper">
                         <label class="file-label">
-                            Select File
+                            📎 Choose File
                             <input type="file" name="ImageFile" hidden onchange="showFileName(this)">
                         </label>
                         <span id="file-name" class="file-name">No file selected</span>
@@ -319,8 +327,8 @@
         @if (Model.UploadedImagePath != null)
         {
             <div class="result-section">
-                <div class="image-preview">
-                    <h3>Uploaded Image</h3>
+                <h3>Uploaded Image</h3>
+                <div class="uploaded-image-container">
                     <img src="@Model.UploadedImagePath" alt="Uploaded Image" />
                 </div>
             </div>
@@ -339,27 +347,28 @@
 
                         <li>
                             <strong>@result.Class</strong> — Score: @result.Score
-                            | Renk: <span style="color:@rgb">@result.ColorName</span>
+                            | Color: <span style="color:@rgb">@result.ColorName</span>
                         </li>
                     }
                 </ul>
             </div>
         }
 
+
+
         @if (Model.SearchResults != null && Model.SearchResults.Any())
         {
             <div class="result-section">
                 <h3>🔍 Search Results</h3>
                 <ul class="result-list">
-                    @foreach (var item in Model.SearchResults)
+                    @foreach (var item in Model.SearchResults.Where(x => x.UserId == Model.CurrentUserId))
                     {
                         <li>
                             <strong>@item.FileName</strong><br />
-                            Labels: @string.Join(", ", item.Labels)<br />
+                            Tags: @string.Join(", ", item.Labels)<br />
                             Colors: @string.Join(", ", item.Colors)<br />
-                            City: @item.City
-                            <br />
-                            <img src="@item.Path" />
+                            City: @item.City<br />
+                            <img src="@item.Path" alt="@item.FileName" />
                         </li>
                     }
                 </ul>
@@ -370,25 +379,18 @@
     <script>
         const toggleBtn = document.getElementById("toggle-sidebar");
         const sidebar = document.getElementById("sidebar");
-        const userIcon = document.getElementById("userIcon");
-        const dropdownMenu = document.getElementById("dropdownMenu");
+        const closeBtn = document.getElementById("close-sidebar");
 
         toggleBtn.addEventListener("click", () => {
             sidebar.classList.toggle("active");
         });
 
-        userIcon.addEventListener("click", () => {
-            dropdownMenu.style.display = dropdownMenu.style.display === "block" ? "none" : "block";
-        });
-
-        window.addEventListener("click", function (e) {
-            if (!userIcon.contains(e.target) && !dropdownMenu.contains(e.target)) {
-                dropdownMenu.style.display = "none";
-            }
+        closeBtn.addEventListener("click", () => {
+            sidebar.classList.remove("active");
         });
 
         function showFileName(input) {
-            const fileName = input.files[0] ? input.files[0].name : 'Dosya seçilmedi';
+            const fileName = input.files[0] ? input.files[0].name : 'No file selected';
             document.getElementById('file-name').textContent = fileName;
         }
     </script>

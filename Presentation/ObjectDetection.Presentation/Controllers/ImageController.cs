@@ -4,6 +4,7 @@ using ObjectDetection.Application.Abstractions;
 using ObjectDetection.Presentation.Models;
 using System;
 using System.IO;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace ObjectDetection.Presentation.Controllers
@@ -73,11 +74,14 @@ namespace ObjectDetection.Presentation.Controllers
         [HttpGet("search")]
         public async Task<IActionResult> Search([FromQuery] string query, [FromServices] ISearchImageUseCase searchImageUseCase)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // using System.Security.Claims;
+
             var model = new ImageUploadViewModel
             {
                 UserImages = await _getUserImagesUseCase.ExecuteAsync(),
                 SearchQuery = query,
-                SearchResults = await searchImageUseCase.ExecuteAsync(query)
+                SearchResults = await searchImageUseCase.ExecuteAsync(query),
+                CurrentUserId = userId // ✅ EKLENDİ
             };
 
             return View("Upload", model);

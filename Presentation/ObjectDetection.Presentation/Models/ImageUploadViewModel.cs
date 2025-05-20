@@ -12,6 +12,8 @@ namespace ObjectDetection.Presentation.Models
         public List<ImageDto> UserImages { get; set; }
         public string? SearchQuery { get; set; }
         public List<ElasticImageDto>? SearchResults { get; set; }
+        public string CurrentUserId { get; set; }
+
 
     }
 }
